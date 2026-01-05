@@ -169,6 +169,17 @@ details summary {
   color: var(--ink);
 }
 
+.formula {
+  margin-top: 8px;
+  padding: 10px 12px;
+  background: #f3efe7;
+  border-radius: 10px;
+  font-family: "IBM Plex Mono", "Courier New", monospace;
+  font-size: 0.9rem;
+  color: #2c2c2c;
+  white-space: pre-wrap;
+}
+
 .upload {
   display: grid;
   gap: 16px;

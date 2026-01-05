@@ -69,19 +69,31 @@
           <h3>K-Nearest Neighbors</h3>
           <details open>
             <summary>1. Prepare Features</summary>
-            <p>Flatten each 32x32x3 image into a vector and normalize pixel values.</p>
+            <p>Flatten each 32x32x3 image into a vector x in R^3072 and normalize pixel values.</p>
+            <div class="formula">
+              $$x = \frac{x/255 - \mu}{\sigma}$$
+            </div>
           </details>
           <details>
             <summary>2. Compute Distances</summary>
-            <p>Use an efficient distance matrix to compare each test image to all training images.</p>
+            <p>Compare each test vector to all training vectors with L2 distance.</p>
+            <div class="formula">
+              $$d(x, x_i) = \sqrt{\sum_j (x_j - x_{i,j})^2}$$
+            </div>
           </details>
           <details>
             <summary>3. Vote for a Label</summary>
-            <p>Pick the top-k nearest samples and predict using majority vote.</p>
+            <p>Pick the k nearest samples and predict using majority or weighted vote.</p>
+            <div class="formula">
+              $$\hat{y} = \arg\max_c \sum_{i \in N_k(x)} w_i \cdot \mathbf{1}[y_i = c]$$
+            </div>
           </details>
           <details>
             <summary>4. Evaluate Accuracy</summary>
-            <p>Repeat across k values and plot accuracy to find the best baseline.</p>
+            <p>Repeat across k values and measure accuracy on a validation split.</p>
+            <div class="formula">
+              $$\text{accuracy} = \frac{1}{N} \sum_i \mathbf{1}[\hat{y}_i = y_i]$$
+            </div>
           </details>
         </div>
         <div class="card">
@@ -89,18 +101,32 @@
           <details open>
             <summary>1. Initialize Weights</summary>
             <p>Start with small random weights for the hidden and output layers.</p>
+            <div class="formula">
+              $$W_1 \sim U(-1, 1),\; W_2 \sim U(-1, 1),\; b_1 = 0,\; b_2 = 0$$
+            </div>
           </details>
           <details>
             <summary>2. Forward Pass</summary>
-            <p>Compute activations through the hidden layer and apply softmax at the output.</p>
+            <p>Compute hidden activations and a softmax output distribution.</p>
+            <div class="formula">
+              $$a_1 = \sigma(x W_1 + b_1)$$
+              $$p = \text{softmax}(a_1 W_2 + b_2)$$
+            </div>
           </details>
           <details>
             <summary>3. Backpropagation</summary>
-            <p>Compute gradients for weights and biases using cross-entropy loss.</p>
+            <p>Compute gradients using cross-entropy loss.</p>
+            <div class="formula">
+              $$L = -\sum_c y_c \log(p_c)$$
+              $$\frac{\partial L}{\partial W_2} = a_1^T (p - y)$$
+            </div>
           </details>
           <details>
             <summary>4. Update Parameters</summary>
-            <p>Apply gradient descent over multiple epochs and track accuracy.</p>
+            <p>Update parameters with gradient descent and track accuracy.</p>
+            <div class="formula">
+              $$W \leftarrow W - \eta \frac{\partial L}{\partial W}$$
+            </div>
           </details>
         </div>
       </div>
@@ -174,5 +200,14 @@
   </footer>
 
   <script src="script.js"></script>
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [["$", "$"], ["\\(", "\\)"]],
+        displayMath: [["$$", "$$"], ["\\[", "\\]"]]
+      }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
 </body>
 </html>
