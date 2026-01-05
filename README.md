@@ -123,3 +123,45 @@ $\frac{\partial C}{\partial B^{(1)}}
 = \frac{\partial C}{\partial Z^{(1)}}$
 
 In summary, this project allowed me to apply core concepts of supervised learning and neural network training in practice, from algorithmic implementation to experimental evaluation. It provided a clear understanding of how classical and modern methods approach the same classification problem, and how model architecture and learning parameters can significantly impact the outcome.  
+
+## Web App Guide
+### Prerequisites
+- Python 3.9+
+- CIFAR-10 data located at `data/cifar-10-batches-py`
+
+### Install
+```bash
+pip install -r requirements.txt
+```
+
+### Train Models (KNN + MLP)
+```bash
+python app.py --train --train-only
+```
+
+Useful training options:
+- `--knn-auto-k` auto-tunes K using a validation split.
+- `--knn-weighted` uses distance-weighted voting.
+- `--knn-pca 128` uses PCA to reduce noise.
+- `--knn-extra-dir test_images --knn-extra-label cat` adds extra images for KNN training.
+
+Example:
+```bash
+python app.py --train --train-only --knn-auto-k --knn-weighted --knn-pca 128
+```
+
+### Run the Web App
+```bash
+python app.py
+```
+Open `http://127.0.0.1:5000` in your browser.
+
+### Uploads and Gallery
+- Use the upload panel to preview an image.
+- Optional: add a label before saving.
+- Click "Save to Gallery" to store it on the server.
+- Use "Delete" to remove saved images.
+
+### Notes
+- The web UI uses MathJax (CDN) to render formulas.
+- CIFAR-10 models may not generalize to high-resolution real photos. For better results, add more labeled images or use a stronger model.
