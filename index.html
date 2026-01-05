@@ -1,0 +1,171 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>KNN and MLP Image Classification Lab</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <p class="eyebrow">Academic Lab Notebook</p>
+      <h1>KNN and MLP Image Classification</h1>
+      <p class="subtitle">
+        A step-by-step exploration of a classical baseline and a neural network for CIFAR-10.
+      </p>
+      <div class="hero-actions">
+        <a class="btn" href="#lab">Run a Test</a>
+        <a class="btn ghost" href="#walkthrough">Read the Walkthrough</a>
+      </div>
+      <div class="hero-meta">
+        <span>Dataset: CIFAR-10</span>
+        <span>Models: KNN, MLP</span>
+        <span>Focus: Learning + Evaluation</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="section" id="overview">
+      <div class="section-header">
+        <h2>Project Overview</h2>
+        <p>
+          This project implements two classifiers from scratch: a K-Nearest Neighbors baseline and a
+          one-hidden-layer Multilayer Perceptron. The goal is to compare their behavior, training
+          dynamics, and accuracy on a shared image dataset.
+        </p>
+      </div>
+      <div class="grid two">
+        <div class="card">
+          <h3>Pipeline Stages</h3>
+          <ol class="steps">
+            <li>Load CIFAR-10 and split train/test sets.</li>
+            <li>Normalize pixels and flatten images.</li>
+            <li>Train KNN and evaluate across k values.</li>
+            <li>Train MLP using softmax and cross-entropy.</li>
+            <li>Visualize accuracy and compare outcomes.</li>
+          </ol>
+        </div>
+        <div class="card">
+          <h3>Key Comparisons</h3>
+          <ul class="bullets">
+            <li>Distance-based inference vs gradient learning.</li>
+            <li>Runtime cost at prediction time.</li>
+            <li>Accuracy and stability across experiments.</li>
+            <li>Impact of hyperparameters and epochs.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="walkthrough">
+      <div class="section-header">
+        <h2>Algorithm Walkthrough</h2>
+        <p>Open each section to follow the computation step by step.</p>
+      </div>
+      <div class="grid two">
+        <div class="card">
+          <h3>K-Nearest Neighbors</h3>
+          <details open>
+            <summary>1. Prepare Features</summary>
+            <p>Flatten each 32x32x3 image into a vector and normalize pixel values.</p>
+          </details>
+          <details>
+            <summary>2. Compute Distances</summary>
+            <p>Use an efficient distance matrix to compare each test image to all training images.</p>
+          </details>
+          <details>
+            <summary>3. Vote for a Label</summary>
+            <p>Pick the top-k nearest samples and predict using majority vote.</p>
+          </details>
+          <details>
+            <summary>4. Evaluate Accuracy</summary>
+            <p>Repeat across k values and plot accuracy to find the best baseline.</p>
+          </details>
+        </div>
+        <div class="card">
+          <h3>Multilayer Perceptron</h3>
+          <details open>
+            <summary>1. Initialize Weights</summary>
+            <p>Start with small random weights for the hidden and output layers.</p>
+          </details>
+          <details>
+            <summary>2. Forward Pass</summary>
+            <p>Compute activations through the hidden layer and apply softmax at the output.</p>
+          </details>
+          <details>
+            <summary>3. Backpropagation</summary>
+            <p>Compute gradients for weights and biases using cross-entropy loss.</p>
+          </details>
+          <details>
+            <summary>4. Update Parameters</summary>
+            <p>Apply gradient descent over multiple epochs and track accuracy.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="results">
+      <div class="section-header">
+        <h2>Results Snapshot</h2>
+        <p>The plots below come from training runs saved in the project.</p>
+      </div>
+      <div class="grid two">
+        <figure class="card">
+          <img src="results/knn.png" alt="KNN accuracy plot" />
+          <figcaption>KNN accuracy across k values.</figcaption>
+        </figure>
+        <figure class="card">
+          <img src="results/mlp.png" alt="MLP training plot" />
+          <figcaption>MLP training accuracy over epochs.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section" id="lab">
+      <div class="section-header">
+        <h2>Interactive Lab</h2>
+        <p>
+          Upload your own image to test the models. The page will send the image to a prediction
+          endpoint if one is configured.
+        </p>
+      </div>
+      <div class="grid two">
+        <div class="card">
+          <div class="upload">
+            <input id="fileInput" type="file" accept="image/*" />
+            <label for="fileInput">
+              <span>Drop an image or click to browse</span>
+              <small>Recommended: square images, 32x32 or larger.</small>
+            </label>
+            <canvas id="preview" width="320" height="320"></canvas>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Run Inference</h3>
+          <div class="button-row">
+            <button class="btn" data-model="knn">Run KNN</button>
+            <button class="btn" data-model="mlp">Run MLP</button>
+          </div>
+          <div class="output" id="output">
+            <p class="status">Awaiting input. Upload an image to begin.</p>
+          </div>
+          <div class="hint">
+            <p>
+              Hook up your backend at <code>/predict/knn</code> or <code>/predict/mlp</code> to return
+              JSON: <code>{"label": "cat", "confidence": 0.92}</code>.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>Built to document and explain two classic approaches to image classification.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
