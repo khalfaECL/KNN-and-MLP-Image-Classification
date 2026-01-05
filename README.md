@@ -1,7 +1,7 @@
-# TD1 – Image Classification
+Image Classification
 
 ## Author  
-Student at École Centrale de Lyon – MOD 4.6 Deep Learning & Artificial Intelligence  
+Student at École Centrale de Lyon – Deep Learning & Artificial Intelligence  
 
 ## Overview  
 This work consists of designing and implementing a complete image classification pipeline based on two different approaches: a traditional K-Nearest Neighbors (KNN) method and a Multilayer Perceptron (MLP) neural network. The study is conducted using the CIFAR-10 dataset, which provides a diverse set of labeled images used to train and evaluate both models. The first part focuses on the KNN algorithm, where I implemented an efficient computation of the distance matrix and evaluated its performance as a baseline classifier. The second part extends the work to neural networks, where I developed a one-hidden-layer MLP trained with the cross-entropy loss function and a softmax output layer to handle multi-class predictions.  
