@@ -139,6 +139,10 @@
               <span>Drop an image or click to browse</span>
               <small>Recommended: square images, 32x32 or larger.</small>
             </label>
+            <div class="field">
+              <label class="field-label" for="imageLabel">Optional label</label>
+              <input id="imageLabel" type="text" placeholder="e.g., cat" />
+            </div>
             <canvas id="preview" width="320" height="320"></canvas>
           </div>
         </div>
@@ -148,17 +152,20 @@
             <button class="btn" data-model="knn">Run KNN</button>
             <button class="btn" data-model="mlp">Run MLP</button>
           </div>
+          <button class="btn ghost" id="saveImage">Save to Gallery</button>
           <div class="output" id="output">
             <p class="status">Awaiting input. Upload an image to begin.</p>
           </div>
-          <div class="hint">
-            <p>
-              Hook up your backend at <code>/predict/knn</code> or <code>/predict/mlp</code> to return
-              JSON: <code>{"label": "cat", "confidence": 0.92}</code>.
-            </p>
-          </div>
         </div>
       </div>
+    </section>
+
+    <section class="section" id="gallery">
+      <div class="section-header">
+        <h2>Saved Gallery</h2>
+        <p>Saved uploads are stored on the server and can be reused for testing.</p>
+      </div>
+      <div class="grid three" id="galleryGrid"></div>
     </section>
   </main>
 

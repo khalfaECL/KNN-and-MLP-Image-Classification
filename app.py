@@ -3,6 +3,8 @@
 import argparse
 import base64
 import io
+import json
+import time
 from pathlib import Path
 
 import numpy as np
@@ -13,6 +15,8 @@ from read_cifar import read_cifar, split_dataset
 
 APP_DIR = Path(__file__).resolve().parent
 MODEL_DIR = APP_DIR / "models"
+UPLOAD_DIR = APP_DIR / "uploaded_images"
+UPLOAD_INDEX = UPLOAD_DIR / "index.json"
 
 CIFAR_LABELS = [
     "airplane",
@@ -29,9 +33,23 @@ CIFAR_LABELS = [
 LABEL_TO_INDEX = {name: idx for idx, name in enumerate(CIFAR_LABELS)}
 
 app = Flask(__name__, static_folder=str(APP_DIR))
+UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+if not UPLOAD_INDEX.exists():
+    UPLOAD_INDEX.write_text("[]", encoding="utf-8")
 
 
-def decode_image(data_url: str) -> tuple[np.ndarray, bool]:
+def load_upload_index() -> list[dict]:
+    try:
+        return json.loads(UPLOAD_INDEX.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return []
+
+
+def save_upload_index(items: list[dict]) -> None:
+    UPLOAD_INDEX.write_text(json.dumps(items, indent=2), encoding="utf-8")
+
+
+def decode_image_raw(data_url: str) -> tuple[Image.Image, bool, str]:
     if "," in data_url:
         _, payload = data_url.split(",", 1)
     else:
@@ -40,9 +58,15 @@ def decode_image(data_url: str) -> tuple[np.ndarray, bool]:
     with Image.open(io.BytesIO(raw)) as image:
         image = image.convert("RGB")
         resized = image.size != (32, 32)
-        if resized:
-            image = ImageOps.fit(image, (32, 32), Image.Resampling.BILINEAR)
-        array = np.asarray(image, dtype=np.float32)
+        image_format = image.format or "PNG"
+        return image.copy(), resized, image_format
+
+
+def decode_image(data_url: str) -> tuple[np.ndarray, bool]:
+    image, resized, _ = decode_image_raw(data_url)
+    if resized:
+        image = ImageOps.fit(image, (32, 32), Image.Resampling.BILINEAR)
+    array = np.asarray(image, dtype=np.float32)
     return array.reshape(1, -1), resized
 
 
@@ -148,6 +172,61 @@ def index():
 @app.get("/<path:path>")
 def static_files(path: str):
     return send_from_directory(APP_DIR, path)
+
+
+@app.get("/uploads")
+def list_uploads():
+    return jsonify({"items": load_upload_index()})
+
+
+@app.post("/upload")
+def save_upload():
+    payload = request.get_json(silent=True)
+    if not payload or "image" not in payload:
+        return error_response("missing_image", 400)
+    label = payload.get("label")
+    label = label.strip() if isinstance(label, str) and label.strip() else None
+
+    image, resized, image_format = decode_image_raw(payload["image"])
+    timestamp = int(time.time() * 1000)
+    ext = "jpg" if image_format.upper() in {"JPEG", "JPG"} else "png"
+    filename = f"{timestamp}.{ext}"
+    save_path = UPLOAD_DIR / filename
+    if ext == "jpg":
+        image.save(save_path, format="JPEG", quality=95)
+    else:
+        image.save(save_path, format="PNG")
+
+    items = load_upload_index()
+    items.insert(
+        0,
+        {
+            "filename": filename,
+            "label": label,
+            "resized": resized,
+            "created_at": timestamp,
+        },
+    )
+    save_upload_index(items)
+    return jsonify({"ok": True, "item": items[0]})
+
+
+@app.get("/uploaded_images/<path:filename>")
+def serve_uploaded_image(filename: str):
+    return send_from_directory(UPLOAD_DIR, filename)
+
+
+@app.delete("/uploads/<path:filename>")
+def delete_upload(filename: str):
+    items = load_upload_index()
+    remaining = [item for item in items if item.get("filename") != filename]
+    if len(remaining) == len(items):
+        return error_response("not_found", 404)
+    save_upload_index(remaining)
+    file_path = UPLOAD_DIR / filename
+    if file_path.exists():
+        file_path.unlink()
+    return jsonify({"ok": True, "filename": filename})
 
 
 @app.post("/predict/knn")

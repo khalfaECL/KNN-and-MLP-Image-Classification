@@ -103,6 +103,10 @@ a {
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
 }
 
+.grid.three {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
 .card {
   background: rgba(255, 255, 255, 0.88);
   border-radius: var(--radius);
@@ -146,6 +150,11 @@ a {
   background: transparent;
   border: 1px solid var(--accent);
   color: var(--accent);
+}
+
+.btn.danger {
+  background: #1b1b1b;
+  color: #f7f4ef;
 }
 
 details {
@@ -193,6 +202,23 @@ details summary {
   margin-bottom: 16px;
 }
 
+.field {
+  display: grid;
+  gap: 6px;
+}
+
+.field-label {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.field input {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  font-family: inherit;
+}
+
 .output {
   background: #111;
   color: #f3f3f3;
@@ -213,6 +239,23 @@ details summary {
 .footer {
   text-align: center;
   padding: 30px 20px 60px;
+  color: var(--muted);
+}
+
+.gallery-card {
+  display: grid;
+  gap: 12px;
+}
+
+.gallery-card img {
+  width: 100%;
+  border-radius: 12px;
+  object-fit: cover;
+  aspect-ratio: 1 / 1;
+}
+
+.gallery-meta {
+  font-size: 0.85rem;
   color: var(--muted);
 }
 
